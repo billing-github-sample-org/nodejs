@@ -51,7 +51,7 @@ pipeline {
             steps {
                 script {
                     openshift.withCluster() {
-                        openshift.withProject("rc-${env.projectName}") {
+                        openshift.withProject("rc-${projectName()}") {
                             echo "Using project: ${openshift.project()}"
                         }
                     }
