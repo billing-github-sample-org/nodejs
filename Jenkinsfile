@@ -17,6 +17,7 @@ pipeline {
         timeout(time: 20, unit: 'MINUTES')
     }
     environment {
+        projectName = "rc-dev"        
         if (env.BRANCH_NAME == 'dev') {
             projectName = "rc-dev"
         }
