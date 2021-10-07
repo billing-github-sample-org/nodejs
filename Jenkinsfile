@@ -5,6 +5,35 @@ def templateName = 'nodejs-postgresql-example'
 // NOTE, the "pipeline" directive/closure from the declarative pipeline syntax needs to include, or be nested outside,
 // and "openshift" directive/closure from the OpenShift Client Plugin for Jenkins.  Otherwise, the declarative pipeline engine
 // will not be fully engaged.
+
+def projectName() {
+    val = "rc-dev"        
+    if (env.BRANCH_NAME == 'dev') {
+        val = "rc-dev"
+    }
+    else if (env.BRANCH_NAME == 'qa') {
+        val = "rc-qa"
+    }
+    else if (env.BRANCH_NAME == 'uat') {
+        val = "rc-uat"
+    }
+    else if (env.BRANCH_NAME == 'stg') {
+        val = "rc-stg"
+    }
+    else if (env.BRANCH_NAME == 'perf') {
+        val = "rc-perf"
+    }
+    else if (env.BRANCH_NAME == 'preprod') {
+        val = "rc-preprod"
+    } 
+    else if (env.BRANCH_NAME == 'prod') {
+        val = "rc-dev"
+    } else {
+        val = "rc-dev"
+    }      
+    return val
+}
+
 pipeline {
     agent {
       node {
@@ -15,33 +44,6 @@ pipeline {
     options {
         // set a timeout of 20 minutes for this pipeline
         timeout(time: 20, unit: 'MINUTES')
-    }
-    environment {
-        projectName = "rc-dev"        
-        if (env.BRANCH_NAME == 'dev') {
-            projectName = "rc-dev"
-        }
-        else if (env.BRANCH_NAME == 'qa') {
-            projectName = "rc-qa"
-        }
-        else if (env.BRANCH_NAME == 'uat') {
-            projectName = "rc-uat"
-        }
-        else if (env.BRANCH_NAME == 'stg') {
-            projectName = "rc-stg"
-        }
-        else if (env.BRANCH_NAME == 'perf') {
-            projectName = "rc-perf"
-        }
-        else if (env.BRANCH_NAME == 'preprod') {
-            projectName = "rc-preprod"
-        } 
-        else if (env.BRANCH_NAME == 'prod') {
-            projectName = "rc-dev"
-        } else {
-            projectName = "rc-dev"
-        }  
-
     }
 
     stages {
