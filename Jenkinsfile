@@ -16,13 +16,33 @@ pipeline {
         // set a timeout of 20 minutes for this pipeline
         timeout(time: 20, unit: 'MINUTES')
     }
+    environment {
+        if (env.BRANCH_NAME == 'dev') {
+            projectName = "rc-dev"
+        else if (env.BRANCH_NAME == 'qa') {
+            projectName = "rc-qa"
+        else if (env.BRANCH_NAME == 'uat') {
+            projectName = "rc-uat"
+        else if (env.BRANCH_NAME == 'stg') {
+            projectName = "rc-stg"
+        else if (env.BRANCH_NAME == 'perf') {
+            projectName = "rc-perf"
+        else if (env.BRANCH_NAME == 'preprod') {
+            projectName = "rc-preprod"
+        else if (env.BRANCH_NAME == 'prod') {
+            projectName = "rc-dev"
+        } else {
+            projectName = "rc-dev"
+        }  
+
+    }
 
     stages {
         stage('preamble') {
             steps {
                 script {
                     openshift.withCluster() {
-                        openshift.withProject("rc-${env.BRANCH_NAME}") {
+                        openshift.withProject("rc-${env.projectName}") {
                             echo "Using project: ${openshift.project()}"
                         }
                     }
@@ -33,7 +53,7 @@ pipeline {
             steps {
                 script {
                     openshift.withCluster() {
-                        openshift.withProject("rc-${env.BRANCH_NAME}") {
+                        openshift.withProject("rc-${env.projectName}") {
                             // delete everything with this template label
                             openshift.selector("all", [ template : templateName ]).delete()
                             // delete any secrets with this template label
@@ -49,7 +69,7 @@ pipeline {
             steps {
                 script {
                     openshift.withCluster() {
-                        openshift.withProject("rc-${env.BRANCH_NAME}") {
+                        openshift.withProject("rc-${env.projectName}") {
                             // create a new application from the templatePath
                             openshift.newApp(templatePath)
                         }
@@ -61,7 +81,7 @@ pipeline {
             steps {
                 script {
                     openshift.withCluster() {
-                        openshift.withProject("rc-${env.BRANCH_NAME}") {
+                        openshift.withProject("rc-${env.projectName}") {
                             def builds = openshift.selector("bc", templateName).related('builds')
                             builds.untilEach(1) {
                                 return (it.object().status.phase == "Complete")
@@ -75,7 +95,7 @@ pipeline {
             steps {
                 script {
                     openshift.withCluster() {
-                        openshift.withProject("rc-${env.BRANCH_NAME}") {
+                        openshift.withProject("rc-${env.projectName}") {
                             def rm = openshift.selector("dc", templateName).rollout()
                             openshift.selector("dc", templateName).related('pods').untilEach(1) {
                                 return (it.object().status.phase == "Running")
@@ -89,7 +109,7 @@ pipeline {
             steps {
                 script {
                     openshift.withCluster() {
-                        openshift.withProject("rc-${env.BRANCH_NAME}") {
+                        openshift.withProject("rc-${env.projectName}") {
                             // if everything else succeeded, tag the ${templateName}:latest image as ${templateName}-staging:latest
                             // a pipeline build config for the staging environment can watch for the ${templateName}-staging:latest
                             // image to change and then deploy it to the staging environment
