@@ -22,7 +22,7 @@ pipeline {
             steps {
                 script {
                     openshift.withCluster() {
-                        openshift.withProject() {
+                        openshift.withProject("rc-dev") {
                             echo "Using project: ${openshift.project()}"
                         }
                     }
