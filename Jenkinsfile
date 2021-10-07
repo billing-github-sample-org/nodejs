@@ -19,16 +19,22 @@ pipeline {
     environment {
         if (env.BRANCH_NAME == 'dev') {
             projectName = "rc-dev"
+        }
         else if (env.BRANCH_NAME == 'qa') {
             projectName = "rc-qa"
+        }
         else if (env.BRANCH_NAME == 'uat') {
             projectName = "rc-uat"
+        }
         else if (env.BRANCH_NAME == 'stg') {
             projectName = "rc-stg"
+        }
         else if (env.BRANCH_NAME == 'perf') {
             projectName = "rc-perf"
+        }
         else if (env.BRANCH_NAME == 'preprod') {
             projectName = "rc-preprod"
+        } 
         else if (env.BRANCH_NAME == 'prod') {
             projectName = "rc-dev"
         } else {
