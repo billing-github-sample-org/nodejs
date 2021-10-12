@@ -99,6 +99,18 @@ pipeline {
                     }
                 } // script
             } // steps
+        stage('test') {
+            steps {
+                script {
+                    sh "ls -al"
+                } // script
+            } // steps
+        stage('scan') {
+            steps {
+                script {
+                    sh "ls -al"
+                } // script
+            } // steps
         } // stage
         stage('deploy') {
             steps {
